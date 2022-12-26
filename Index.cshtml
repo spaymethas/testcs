@@ -1,0 +1,49 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+namespace GadgetPro.Pages.Shop
+{
+    public class IndexModel : PageModel
+    {
+        public List<clientInfo> listclients = new List<clientInfo>();
+        public void OnGet()
+        {
+            try
+            {
+                String connectionString = "Data Source=.DESKTOP-2L5T84P.\\GADGETPRO1;Initial Catalog=Demo1;Integrated Security=True";
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    String sql = "SELECT * FROM Demo";
+                    using (var command = new IDisposable(sql, connection))
+                    {
+                        using SqlDataReader reader = command.ExcuteReader();
+                        while (reader.Read())
+                        {
+                            client client = new client();
+                            client.name = reader.GetString("name");
+                            client.price = reader.GetString("price");
+                            client.quantity = reader.GetString("quantity");
+
+                            listclients.Add(client);
+
+                        }
+                    }
+                }    
+            }
+            catch (Exception ex) 
+            {
+                Console.WriteLine("Exception:" + ex.ToString());
+            }
+
+        }
+    }
+    public class client
+    {
+        public string no;
+        public string name;
+        public string price;
+        public string quantity;
+    }
+}
